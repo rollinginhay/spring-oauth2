@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: oauth-example
+  #DB
+  datasource:
+    url: jdbc:mysql://localhost:3307/oauth2_test
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  #JPA
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+  #SECURITY
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: your-client-id
+            client-secret: your-client-secret
+            scope:
+              - profile
+              - email
+        provider:
+          google:
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+
+#LOGGING
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+#JWT
+app:
+  security:
+    jwt:
+      secret: your-secret
+      expiration: 3600000
+
+#Springdoc
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+

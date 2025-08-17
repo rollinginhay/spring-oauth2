@@ -1,0 +1,72 @@
+package mtt.exmaplebackend.service;
+
+import lombok.RequiredArgsConstructor;
+import mtt.exmaplebackend.exceptioHandler.BadRequestexception;
+import mtt.exmaplebackend.exceptioHandler.UnauthorizedException;
+import mtt.exmaplebackend.model.Role;
+import mtt.exmaplebackend.model.User;
+import mtt.exmaplebackend.model.dto.request.LoginRequest;
+import mtt.exmaplebackend.model.dto.request.RegisterRequest;
+import mtt.exmaplebackend.model.dto.response.AuthenticationResponse;
+import mtt.exmaplebackend.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
+
+    public AuthenticationResponse login(LoginRequest request) {
+        User user = userRepository
+                .findByEmail(request.email())
+                .filter(u -> passwordEncoder.matches(request.password(), u.getPassword()))
+                .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
+
+        String token = jwtService.generateToken(user.getEmail(), Map.of("role", user.getRole()));
+
+        return new AuthenticationResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getRole(),
+                user.getCreatedAt(),
+                user.getUpdatedAt(),
+                token
+        );
+    }
+
+    @Transactional
+    public AuthenticationResponse register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
+            throw new BadRequestexception("Email already in use");
+        }
+        User newUser = User.builder()
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .phoneNumber(request.phoneNumber())
+                .role(Role.USER.getRoleName())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        User user = userRepository.save(newUser);
+
+        String token = jwtService.generateToken(user.getEmail(), Map.of("role", user.getRole()));
+
+        return new AuthenticationResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getRole(),
+                user.getCreatedAt(),
+                user.getUpdatedAt(),
+                token
+        );
+
+    }
+}
