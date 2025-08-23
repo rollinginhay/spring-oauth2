@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import mtt.exmaplebackend.model.Role;
 import mtt.exmaplebackend.service.JwtService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -35,9 +37,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (jwtService.validateToken(token)) {
             String email = jwtService.extractSubject(token);
-            String role = jwtService.extractAllClaims(token).get("role", String.class);
 
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null, List.of(new SimpleGrantedAuthority(role)));
+            Set<Role> roles = jwtService.extractAllClaims(token).get("roles", Set.class);
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null, roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList()));
 
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }

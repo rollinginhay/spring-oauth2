@@ -5,10 +5,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import mtt.exmaplebackend.model.Role;
+import mtt.exmaplebackend.model.RoleDef;
 import mtt.exmaplebackend.model.User;
 import mtt.exmaplebackend.model.dto.OAuthPrincipalDetails;
 import mtt.exmaplebackend.model.dto.response.AuthenticationResponse;
+import mtt.exmaplebackend.repository.RoleRepository;
 import mtt.exmaplebackend.repository.UserRepository;
 import mtt.exmaplebackend.service.JwtService;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -61,7 +64,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
                             .name(name)
                             .oauth2Id(subject)
                             .isOauth2User(true)
-                            .role(Role.USER.getRoleName())
+                            .roles(Set.of(roleRepository.findByName(RoleDef.ROLE_USER.name()).get()))
                             .createdAt(LocalDateTime.now())
                             .updatedAt(LocalDateTime.now())
                             .build();
@@ -72,14 +75,14 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         //generate jwt token
         String jwtToken = jwtService.generateToken(
                 user.getEmail(),
-                Map.of("role", user.getRole())
+                Map.of("roles", user.getRoles())
         );
 
         //return auth resp
         AuthenticationResponse authResp = new AuthenticationResponse(
                 user.getId(),
                 user.getEmail(),
-                user.getRole(),
+                user.getRoles(),
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
                 jwtToken

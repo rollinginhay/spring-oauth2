@@ -1,14 +1,24 @@
 package mtt.exmaplebackend.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Getter
+import java.util.Set;
+
+@Entity
 @AllArgsConstructor
-public enum Role {
-    ADMIN("ROLE_ADMIN"),
-    USER("ROLE_USER");
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final String roleName;
-    
+    private String name;
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users;
+
 }
