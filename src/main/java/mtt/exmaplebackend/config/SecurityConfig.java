@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/v3/**", "/api-docs/**", "swagger-ui/**", "/api/v1/auth/**", "/oauth2/**", "/login/oauth2/**", "/error", "swagger-ui.html").permitAll()
                         .requestMatchers("/api/v1/user/**").hasRole("USER")
                         .anyRequest().authenticated())
-                //use configured auth exception handling behavior for specified paths
+//                use configured auth exception handling behavior for specified paths
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(
                                 authenticationEntryPoint(),

@@ -3,7 +3,7 @@ package mtt.exmaplebackend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -19,6 +19,6 @@ public class Role {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
+    private List<User> users;
 
 }

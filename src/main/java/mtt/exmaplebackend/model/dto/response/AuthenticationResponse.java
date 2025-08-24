@@ -3,12 +3,12 @@ package mtt.exmaplebackend.model.dto.response;
 import mtt.exmaplebackend.model.Role;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Collection;
 
 public record AuthenticationResponse(
         String userId,
         String email,
-        Set<Role> roles,
+        Collection<Role> roles,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         String token

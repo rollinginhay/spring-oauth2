@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -64,7 +64,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
                             .name(name)
                             .oauth2Id(subject)
                             .isOauth2User(true)
-                            .roles(Set.of(roleRepository.findByName(RoleDef.ROLE_USER.name()).get()))
+                            .roles(List.of(roleRepository.findByName(RoleDef.ROLE_USER.name()).get()))
                             .createdAt(LocalDateTime.now())
                             .updatedAt(LocalDateTime.now())
                             .build();

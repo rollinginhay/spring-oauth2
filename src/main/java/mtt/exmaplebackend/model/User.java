@@ -7,7 +7,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,7 +38,7 @@ public class User {
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable
-    private Set<Role> roles;
+    private List<Role> roles;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
