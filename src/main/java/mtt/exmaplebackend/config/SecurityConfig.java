@@ -42,12 +42,13 @@ public class SecurityConfig {
                  * Security filter exceptions are not caught by custom exceptionhandlers, have to be handled separately
                  * */
                 .exceptionHandling(exHandler -> exHandler
-                        //when unauthorized
-                        .authenticationEntryPoint((request, response, exception) -> {
+                        //when unauthorized on specific routes
+                        .defaultAuthenticationEntryPointFor((request, response, exception) -> {
                             log.error(exception.getMessage(), exception);
                             filterErrorWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized access", request.getRequestURI());
-                        })
-                        .accessDeniedHandler((request, response, exception) -> filterErrorWriter.writeError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied", request.getRequestURI())))
+                        }, request -> request.getRequestURI().startsWith("/api/"))
+                        .accessDeniedHandler((request, response, exception) -> filterErrorWriter.writeError(response, HttpServletResponse.SC_FORBIDDEN, "Access denied", request.getRequestURI()))
+                )
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorization -> authorization
                                 .baseUri("/oauth2/authorize"))
