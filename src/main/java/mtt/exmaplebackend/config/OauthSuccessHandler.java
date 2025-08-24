@@ -92,7 +92,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         objectMapper.writeValue(response.getWriter(), authResp);
-        //resp is automatically passed next
+        //res req automatically passed next
     }
 
     private OAuthPrincipalDetails getPrincipalDetails(OAuth2User principal) {

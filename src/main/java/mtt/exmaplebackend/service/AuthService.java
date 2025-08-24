@@ -1,8 +1,8 @@
 package mtt.exmaplebackend.service;
 
 import lombok.RequiredArgsConstructor;
-import mtt.exmaplebackend.exceptioHandler.BadRequestexception;
-import mtt.exmaplebackend.exceptioHandler.UnauthorizedException;
+import mtt.exmaplebackend.config.exceptioHandler.BadRequestexception;
+import mtt.exmaplebackend.config.exceptioHandler.UnauthorizedException;
 import mtt.exmaplebackend.model.RoleDef;
 import mtt.exmaplebackend.model.User;
 import mtt.exmaplebackend.model.dto.request.LoginRequest;

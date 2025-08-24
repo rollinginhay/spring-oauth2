@@ -1,6 +1,6 @@
 package mtt.exmaplebackend;
 
-import mtt.exmaplebackend.exceptioHandler.GlobalExceptionHandler;
+import mtt.exmaplebackend.config.exceptioHandler.GlobalExceptionHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;

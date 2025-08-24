@@ -1,4 +1,4 @@
-package mtt.exmaplebackend.exceptioHandler;
+package mtt.exmaplebackend.config.exceptioHandler;
 
 public class UnauthorizedException extends RuntimeException {
     public UnauthorizedException(String message) {

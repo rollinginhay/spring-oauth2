@@ -1,4 +1,4 @@
-package mtt.exmaplebackend.model.dto;
+package mtt.exmaplebackend.model.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

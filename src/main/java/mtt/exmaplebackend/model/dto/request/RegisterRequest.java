@@ -3,7 +3,7 @@ package mtt.exmaplebackend.model.dto.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import mtt.exmaplebackend.validation.ValidPassword;
+import mtt.exmaplebackend.utils.validation.ValidPassword;
 
 public record RegisterRequest(
         @NotBlank(message = "Email is required")

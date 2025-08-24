@@ -1,4 +1,4 @@
-package mtt.exmaplebackend.scripts;
+package mtt.exmaplebackend.utils.scripts;
 
 import lombok.RequiredArgsConstructor;
 import mtt.exmaplebackend.model.Role;
