@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mtt.exmaplebackend.model.Role;
 import mtt.exmaplebackend.model.User;
-import mtt.exmaplebackend.repository.RoleRepository;
 import mtt.exmaplebackend.repository.UserRepository;
 import mtt.exmaplebackend.service.JwtService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +26,6 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final RoleRepository roleRepository;
     private final UserRepository userRepository;
 
     @Override

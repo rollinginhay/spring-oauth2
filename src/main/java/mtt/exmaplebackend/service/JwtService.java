@@ -39,7 +39,7 @@ public class JwtService {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = jwtParser.parseSignedClaims(token);
+            jwtParser.parseSignedClaims(token);
 
             return true;
         } catch (SignatureException e) {

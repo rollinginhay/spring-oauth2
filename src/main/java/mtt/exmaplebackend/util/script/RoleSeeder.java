@@ -13,7 +13,7 @@ public class RoleSeeder implements CommandLineRunner {
     final RoleRepository roleRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         for (RoleDef roleDef : RoleDef.values()) {
             roleRepository.findByName(roleDef.name()).orElseGet(() -> roleRepository.save(Role.builder().name(roleDef.name()).build()));
         }
