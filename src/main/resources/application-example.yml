@@ -1,6 +1,7 @@
+
 spring:
   application:
-    name: oauth-example
+    name: example-backend
   #DB
   datasource:
     url: jdbc:mysql://localhost:3307/oauth2_test
@@ -10,7 +11,7 @@ spring:
   #JPA
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:
@@ -22,25 +23,24 @@ spring:
       client:
         registration:
           google:
-            client-id: your-client-id
-            client-secret: your-client-secret
+            client-id: gcp-client-id
+            client-secret: gcp-client-secret
             scope:
               - profile
               - email
         provider:
           google:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-            user-name-attribute:
+            user-name-attribute: email
       resourceserver:
         jwt:
           issuer-uri: https://accounts.google.com
-
 #LOGGING
 logging:
   level:
     org:
       hibernate:
-        SQL: DEBUG
+        SQL: off
         type:
           descriptor:
             sql:
@@ -49,8 +49,9 @@ logging:
 app:
   security:
     jwt:
-      secret: your-secret
+      secret: jwt-secret
       expiration: 3600000
+
 
 #Springdoc
 springdoc:
@@ -59,3 +60,8 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+#disable whitelabel
+server:
+  error:
+    whitelabel:
+      enabled: false

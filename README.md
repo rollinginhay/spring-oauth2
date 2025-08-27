@@ -1,12 +1,12 @@
 # Spring OAuth2 Authentication
 
-A Spring application with API for authentication.
+A Spring application demonstrating authentication.
 
 ## Features
 
-* Single-provider (Google) authentication
+* Single-provider (Google) Oauth2 authentication
 * Username and password authentication with password encryption
-* JWT authorization
+* Authorization with JWT
 * Multi-role authorization
 * Springdoc API documentation
 * Docker support for db and app
@@ -44,6 +44,7 @@ docker-compose up --build
 ```
 
 Access Swagger UI at: `localhost:8080/swagger-ui.html`
-To access JWT-protected API, access `localhost:8080`, perform login using Google
-Oauth2, copy your token from the response, return to
-`localhost:8080/swagger-ui.html` and authorize your request on the UI. 
+To access JWT-protected API, access `localhost:8080`, perform login using
+Google, copy the issued JWT token from the response, return to
+`localhost:8080/swagger-ui.html`, click the *Authorization* button and paste in the
+token
