@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import mtt.exmaplebackend.config.exceptioHandler.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -38,20 +39,22 @@ public class JwtService {
 
     public boolean validateToken(String token) {
         try {
-            jwtParser.parseSignedClaims(token);
+            Jws<Claims> claims = jwtParser.parseSignedClaims(token);
+
             return true;
         } catch (SignatureException e) {
-            log.error("Invalid JWT signature: {}", e.getMessage());
+            throw new UnauthorizedException("Invalid JWT signature");
         } catch (MalformedJwtException e) {
-            log.error("Invalid JWT token: {}", e.getMessage());
+            throw new UnauthorizedException("Invalid JWT token");
         } catch (ExpiredJwtException e) {
-            log.error("JWT token is expired: {}", e.getMessage());
+            throw new UnauthorizedException("JWT token is expired");
         } catch (UnsupportedJwtException e) {
-            log.error("JWT token is unsupported: {}", e.getMessage());
+            throw new UnauthorizedException("JWT token is unsupported");
         } catch (IllegalArgumentException e) {
-            log.error("JWT claims string is empty: {}", e.getMessage());
+            throw new UnauthorizedException("JWT claims string is empty");
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 
     public Claims extractAllClaims(String token) {

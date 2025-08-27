@@ -12,14 +12,18 @@ import mtt.exmaplebackend.model.dto.request.RegisterRequest;
 import mtt.exmaplebackend.model.dto.response.AuthenticationResponse;
 import mtt.exmaplebackend.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @Tag(name = "Authentication", description = "Authentication APIs")
 @RequiredArgsConstructor
-public class AuthController extends ApiController {
+public class AuthController {
     private final AuthService authService;
+
 
     @Operation(summary = "Register a new user")
     @ApiResponse(responseCode = "200", description = "User registered successfully", content = @Content(schema = @Schema(implementation = AuthenticationResponse.class)))
@@ -36,9 +40,5 @@ public class AuthController extends ApiController {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 
-    @GetMapping("/testex")
-    public ResponseEntity<String> testex() {
-        throw new RuntimeException("testex");
-    }
 
 }

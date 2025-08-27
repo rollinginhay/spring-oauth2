@@ -6,9 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import mtt.exmaplebackend.config.exceptioHandler.FilterErrorWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.authorization.AuthorizationManagers;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -34,12 +37,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-        return http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v3/**", "/api-docs/**", "swagger-ui/**", "/api/v1/auth/**", "/oauth2/**", "/login/oauth2/**", "/error", "swagger-ui.html").permitAll()
-                        .requestMatchers("/api/v1/user/**").hasRole("USER")
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                //disable storing authcontext in session, force only jwt
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/v3/**",
+                                "/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/oauth2/**",
+                                "/login/oauth2/**",
+                                "/error").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/user/users").hasRole("USER")
+                        .requestMatchers("/api/v1/user/elevate").hasRole("USER")
+                        //@preauthorize doenst seem to work for requiring 2 roles
+                        .requestMatchers("/api/v1/user/needtwo").access(AuthorizationManagers.allOf(
+                                AuthorityAuthorizationManager.hasRole(("ADMIN")),
+                                AuthorityAuthorizationManager.hasRole("USER")))
                         .anyRequest().authenticated())
                 /*
-                 * Security filter exceptions are not caught by custom exceptionhandlers, have to be handled separately
+                 * Security filter exceptions are not caught by controlleradvice exceptionhandlers, must be handled separately
                  * */
                 .exceptionHandling(exHandler -> exHandler
                         //when unauthorized on specific routes
@@ -52,10 +72,9 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorization -> authorization
                                 .baseUri("/oauth2/authorize"))
-                        .redirectionEndpoint(redirect -> redirect.baseUri("/login/oauth2/code/*"))
+                        .redirectionEndpoint(redirect -> redirect.baseUri("/login/oauth2/code/google"))
                         .successHandler(oauthSuccessHandler)
                         .failureHandler(oauthFailureHandler))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

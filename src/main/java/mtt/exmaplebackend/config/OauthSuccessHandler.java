@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mtt.exmaplebackend.model.Role;
 import mtt.exmaplebackend.model.RoleDef;
 import mtt.exmaplebackend.model.User;
 import mtt.exmaplebackend.model.dto.OAuthPrincipalDetails;
@@ -12,6 +14,7 @@ import mtt.exmaplebackend.model.dto.response.AuthenticationResponse;
 import mtt.exmaplebackend.repository.RoleRepository;
 import mtt.exmaplebackend.repository.UserRepository;
 import mtt.exmaplebackend.service.JwtService;
+import mtt.exmaplebackend.util.mapper.UserMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -23,7 +26,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OauthSuccessHandler implements AuthenticationSuccessHandler {
@@ -75,18 +80,15 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         //generate jwt token
         String jwtToken = jwtService.generateToken(
                 user.getEmail(),
-                Map.of("roles", user.getRoles())
+                Map.of("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+        );
+
+        log.warn("On success handler, claims: {}",
+                Map.of("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
         );
 
         //return auth resp
-        AuthenticationResponse authResp = new AuthenticationResponse(
-                user.getId(),
-                user.getEmail(),
-                user.getRoles(),
-                user.getCreatedAt(),
-                user.getUpdatedAt(),
-                jwtToken
-        );
+        AuthenticationResponse authResp = UserMapper.mapToAuthResponse(user, jwtToken);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

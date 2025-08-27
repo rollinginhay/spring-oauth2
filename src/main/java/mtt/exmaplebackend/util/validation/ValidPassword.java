@@ -1,4 +1,4 @@
-package mtt.exmaplebackend.utils.validation;
+package mtt.exmaplebackend.util.validation;
 
 
 import jakarta.validation.Constraint;

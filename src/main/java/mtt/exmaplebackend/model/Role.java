@@ -18,6 +18,7 @@ public class Role {
 
     private String name;
 
+    @Transient
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
 
